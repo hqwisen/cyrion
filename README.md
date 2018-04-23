@@ -1,2 +1,3 @@
 # cyrion
- AKA Can you read it or not Lannister
+
+Techniques of Artificial Intelligence project
