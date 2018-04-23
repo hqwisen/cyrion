@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/cyrion-app/cyrion-app.iml" filepath="$PROJECT_DIR$/cyrion-app/cyrion-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cyrion-backend/cyrion-backend.iml" filepath="$PROJECT_DIR$/cyrion-backend/cyrion-backend.iml" />
     </modules>
   </component>
 </project>
