@@ -1,6 +1,6 @@
 <template>
   <canvas @mousedown="mouseDown" @mouseup="mouseUp" @mouseout="mouseOut" @mousemove="mouseMove"
-          ref="canvas" width="100" height="100"></canvas>
+          ref="canvas" :width="width" :height="height"></canvas>
 </template>
 
 <script>
@@ -16,7 +16,9 @@ export default {
       canvas: null,
       drawing: false,
       startDrawing: false,
-      lineWidth: 3
+      lineWidth: 3,
+      width: 100,
+      height: 100
     }
   },
   mounted: function () {
@@ -48,7 +50,6 @@ export default {
     mouseMove: function (e) {
       if (this.drawing) {
         this.setCurrentCoord(e)
-        console.log(this.currX, this.currY)
         this.draw()
       }
     },
@@ -70,8 +71,10 @@ export default {
       var rect = this.canvas.getBoundingClientRect();
       this.currX = e.clientX - rect.left;
       this.currY = e.clientY - rect.top;
+    },
+    clear: function () {
+      this.ctx.clearRect(0, 0, this.width, this.height);
     }
-
   }
 }
 /*
