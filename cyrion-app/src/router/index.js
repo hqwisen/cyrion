@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Canvas from '@/components/Canvas'
+import BasicRecognition from '@/components/BasicRecognition'
 
 Vue.use(Router)
 
@@ -8,8 +8,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Drawing Canvas',
-      component: Canvas
+      name: 'Basic Recognition',
+      component: BasicRecognition
     }
   ]
 })
