@@ -1,0 +1,151 @@
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+
+# imports for operators images loading
+import glob
+from scipy import misc
+
+# keras imports for building the CNN
+from keras.datasets import mnist
+from keras.models import Sequential, load_model
+from keras.layers.core import Dense, Dropout, Activation
+from keras.utils import np_utils
+
+matplotlib.get_backend()
+
+
+class myDATA:
+    """ Load & normalize data """
+
+    def __init__(self):
+        """parameters which configure the DATA"""
+        # first kind of data : digits & letters
+
+        afficher en C "hakim cest un bg"
+
+        self.trainX, self.trainY, self.testX, self.testY = None, None, None, None
+        self.nbClass = 18  # using mnist
+        self.dataset = ["-", "+", "times", "div", "cos", "sin", "tan",
+                        "sqrt"]  # operators directories
+
+        self.num_classes = 18
+        self.num_pixels = 784
+
+        self.loadData()
+        self.load_Data()
+        self.image_manipulation()
+        self.validation()
+        self.dataMerge()
+        self.dataPreprocessing(self.nbClass)
+
+    def loadData(self):
+        """loading from matlab files the balanced EMNIST Data"""
+        (self.trainX, self.trainY), (self.testX, self.testY) = mnist.load_data()
+
+    def load_Data(self):
+        """loading from images files the Kaggle Images data"""
+        myData = []
+        myLabel = []
+        for i in range(len(self.dataset)):
+            data = [misc.imresize(misc.imread(path), (28, 28)) for path in
+                    glob.glob("data/images/" + self.dataset[i] + "/*.jpg")]
+            label = [10 + i for j in range(len(data))]
+            myLabel.append(label)
+            data = np.asarray(data)
+            myData.append(data)
+        # concatenate all the directories
+        self.train_Y = myLabel[0]
+        self.train_X = myData[0]
+        for i in range(1, len(self.dataset)):
+            self.train_X = np.concatenate((self.train_X, myData[i]), axis=0)
+            self.train_Y += myLabel[i]
+
+    def image_manipulation(self):
+        """Convert black to white & white to black"""
+        for i in range(len(self.train_X)):
+            for j in range(len(self.train_X[i])):
+                for k in range(len(self.train_X[j])):
+                    self.train_X[i][j][k] = 255 - self.train_X[i][j][k]
+
+    def validation(self):
+        """split the operators data to train & test data"""
+        # cross-validation
+        self.train_X, self.test_X, self.train_Y, self.test_Y = train_test_split(self.train_X,
+                                                                                self.train_Y,
+                                                                                test_size=0.33,
+                                                                                random_state=42)
+        # convert to numpy array
+        self.train_Y = np.asarray(self.train_Y)
+        self.test_Y = np.asarray(self.test_Y)
+
+    def dataPreprocessing(self, nbClass):
+        """data normalization to help training"""
+        self.trainX = self.trainX.reshape(self.trainX.shape[0],
+                                          self.num_pixels)  # reshape(114849, 37016)
+        self.testX = self.testX.reshape(self.testX.shape[0],
+                                        self.num_pixels)  # (self.testX.shape[0], self.num_pixels)
+        self.trainX = self.trainX.astype('float32')
+        self.testX = self.testX.astype('float32')
+        # Now, let's normalize
+        self.trainX /= 255
+        self.testX /= 255
+        # Now, let's match labels with images vectors
+        self.trainY = np_utils.to_categorical(self.trainY, nbClass)
+        self.testY = np_utils.to_categorical(self.testY, nbClass)
+
+    def dataMerge(self):
+        self.trainX = np.concatenate((self.trainX, self.train_X), axis=0)
+        self.testX = np.concatenate((self.testX, self.test_X), axis=0)
+        self.trainY = np.concatenate((self.trainY, self.train_Y), axis=0)
+        self.testY = np.concatenate((self.testY, self.test_Y), axis=0)
+
+    def display(self, nbSample):
+        """display the image to look at :
+        data = self.trainX or self.train_X
+        dimension = 28 """
+
+        dataX = self.trainX
+        dataX = dataX.reshape(dataX.shape[0], 1, 28, 28, order="A")
+        mySample = dataX[nbSample]
+        plt.imshow(mySample[0], cmap='binary')
+        plt.show()
+
+    def baseline_model(self):
+        # create model
+        model = Sequential()
+        model.add(Dense(self.num_pixels, input_dim=self.num_pixels, kernel_initializer='normal',
+                        activation='relu'))
+        model.add(Dense(self.num_classes, kernel_initializer='normal', activation='softmax'))
+        # Compile model
+        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        return model
+
+
+class myCNN:
+    """ Define a convolutional neural networks to train, test
+    with some data : we can change all the parameters """
+
+    def __init__(self):
+        """parameters which configure the CNN"""
+
+    def buildCNN(self):
+        """ Building a model"""
+
+
+if (__name__ == '__main__'):
+    reseau = myDATA()
+
+    # build the model
+    model = reseau.baseline_model()
+    # Fit the model
+    model.fit(reseau.trainX, reseau.trainY, validation_data=(reseau.testX, reseau.testY), epochs=10,
+              batch_size=200, verbose=2)
+    # Final evaluation of the model
+    scores = model.evaluate(reseau.testX, reseau.testY, verbose=0)
+    print("Baseline Error: %.2f%%" % (100 - scores[1] * 100))
+
+# reseau.display(reseau.train_X, 28, 8)
+# print(reseau.train_X[4])
