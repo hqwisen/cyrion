@@ -52,14 +52,12 @@ class Datasets:
 
     def display(self, nb_sample):
         x_data = self.x_train
-        # print(x_data.shape)
-        # x_data = x_data.reshape(x_data.shape[0], 1, 28, 28)
-        # print("###############")
-        # print(x_data[1])
-        # sample = x_data[nb_sample]
-        # plt.imshow(sample[0], cmap='binary')
+        x_data = x_data.reshape(x_data.shape[0], 1, 28, 28)
+        sample = x_data[nb_sample]
+        print(sample[0])
+        plt.imshow(sample[0], cmap='binary')
+        plt.savefig('testimg', dpi=1)
         # plt.show()
-
 
 class NeuralNetwork:
 
@@ -92,9 +90,29 @@ class NeuralNetwork:
         self.scores = self.model(self.dataset.x_test, self.dataset.y_test, verbose=2)
 
 
+def load_img(path):
+    import glob
+    from scipy import misc
+    data = misc.imresize(misc.imread(path), (28, 28))
+    data = np.asarray(data)
+    print(data)
+    # data.reshape(1, 1, 28, 28)
+    # print(data)
+    # x_data = self.x_train
+    # x_data = x_data.reshape(x_data.shape[0], 1, 28, 28)
+    # sample = x_data[nb_sample]
+    # plt.imshow(data, cmap='binary')
+    # plt.show()
+    # plt.savefig('testimg')
+
+
+
+
 def main():
+    # load_img('testimg.png')
     dataset = Datasets()
-    nn = NeuralNetwork(dataset)
+    dataset.display(1)
+    # nn = NeuralNetwork(dataset)
     # np.set_printoptions(threshold=np.inf)
     # print(dataset.y_train)
     # nn.train()
