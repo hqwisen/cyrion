@@ -17,8 +17,8 @@ export default {
       drawing: false,
       startDrawing: false,
       lineWidth: 3,
-      width: 28,
-      height: 28
+      width: 280,
+      height: 280
     }
   },
   mounted: function () {
