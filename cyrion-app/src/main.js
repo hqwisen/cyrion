@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+
 // FIXME import bootstrap as scss file to allow customization
 import '../node_modules/bootstrap/dist/css/bootstrap.css'
 
