@@ -26,8 +26,11 @@ export default {
   },
   methods: {
     init: function () {
-      this.canvas = this.$refs.canvas
-      this.ctx = this.canvas.getContext("2d")
+      this.canvas = this.$refs.canvas;
+      this.ctx = this.canvas.getContext("2d");
+      // Avoid transparent background
+      this.ctx.fillStyle = "white";
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     },
     mouseDown: function (e) {
       this.setCurrentCoord(e)
@@ -76,7 +79,7 @@ export default {
       this.ctx.clearRect(0, 0, this.width, this.height);
     },
     toDataURL: function(){
-      return this.canvas.toDataURL()
+      return this.canvas.toDataURL('image/png')
     }
   }
 }

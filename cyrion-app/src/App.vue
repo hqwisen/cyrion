@@ -21,4 +21,9 @@ export default {
   /margin-top: 60px;
 }
 */
+
+.top-buffer{
+  margin-top: 30px;
+}
+
 </style>

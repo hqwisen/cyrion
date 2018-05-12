@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <div class="row">
-      <div class="col">
+    <div class="row justify-content-center top-buffer">
+      <div class="col-12">
         <div class="btn-group">
           <button @click="addCanvas" class="btn btn-info">Add canvas</button>
           <button @click="clearAllCanvas" class="btn btn-danger">Clear all</button>
@@ -9,7 +9,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row top-buffer">
 
       <div class="col-12">
         <drawing-canvas v-for="i in numberOfCanvas" :key="i"
@@ -27,12 +27,13 @@ export default {
   components: {DrawingCanvas},
   data() {
     return {
-      numberOfCanvas: 5
+      numberOfCanvas: 1,
+      apiUrl: 'http://localhost:8000/'
     }
   },
   methods: {
     addCanvas: function () {
-      this.numberOfCanvas++
+      this.numberOfCanvas++;
     },
     clearAllCanvas: function () {
 
@@ -41,21 +42,21 @@ export default {
       })
     },
     compute: function () {
-      let allDataImg = []
+      let allDataImg = [];
       this.$refs.canvasComponents.forEach(function (canvas) {
         allDataImg.push(canvas.toDataURL())
-      })
-      this.computeResult(allDataImg)
+      });
+      this.computeResult(allDataImg);
     },
     computeResult: function (allDataImg) {
-      console.log("Sending request to localhost:8000/api/basic/upload")
-      this.$http.get('http://localhost:8000/api/basic/upload').then(response => {
-        console.log("Received!")
-        console.log(response)
+      console.log("Sending request to", this.apiUrl, "api/basic/upload");
+      let data = {
+        'samples': allDataImg
+      };
+      this.$http.post(this.apiUrl + 'api/basic/upload', data).then(response => {
+        console.log("Response success with status:", response.status)
       }, response => {
-        console.log("Not received")
-        console.log(response.status)
-        // TODO implement error callback
+        console.log("Response FAILURE:", response.status)
       });
     }
   }
