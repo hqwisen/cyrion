@@ -1,7 +1,7 @@
 Django==2.0.4
 djangorestframework==3.8.2
 djangorestframework-jsonapi==2.4.0
-
+django-cors-headers
 keras
 scipy
 scikit-image
