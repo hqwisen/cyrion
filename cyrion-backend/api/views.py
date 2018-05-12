@@ -40,5 +40,5 @@ def base64_to_png(img_html, sid, upload_dir):
                  % (img_html[:20], img_html[-20:], filename))
     data = remove_html_tags(img_html)
     img = Image.open(BytesIO(base64.b64decode(data)))
-    img = img.convert('RGB')
+    img = img.convert('L')
     img.save(filename, format="JPEG")
