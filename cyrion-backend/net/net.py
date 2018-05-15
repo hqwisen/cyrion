@@ -179,17 +179,37 @@ def main():
     # print(result)
     # # nn.train()
     # nn.save()
-    dataset = Datasets()
-    nn = NeuralNetwork(from_file=NeuralNetwork.DEFAULT_FILENAME)
-    np.set_printoptions(threshold=np.inf)
-    # nn.train()
-    sample = np.load('sample.npy')
-    # result = nn.model.predict(np.array([sample]), batch_size=200)
-    pred_classes = nn.model.predict_classes(np.asarray([sample, sample]))
-    print(pred_classes)
+
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
+    i = 5
+    print(x_train[i])
+    sample = x_train[i]
+    # dataset = Datasets()
+    # nn = NeuralNetwork(from_file=NeuralNetwork.DEFAULT_FILENAME)
+    # np.set_printoptions(threshold=np.inf)
+    #
+    # # nn.train()
+    # sample = np.load('sample.npy')
+    # # result = nn.model.predict(np.array([sample]), batch_size=200)
+    # print(sample)
+    # sample = sample.reshape(28, 28)
+    plt.imshow(sample)
+    # # plt.savefig('testimg', dpi=1)
+    plt.show()
+
+# pred_classes = nn.model.predict_classes(np.asarray([sample, sample]))
+    # print(pred_classes)
 
 
 
 if __name__ == "__main__":
-    logger.debug("Startin main..")
-    main()
+    logger.debug("Starting main..")
+    # main()
+    from scipy import misc
+    data = misc.imresize(misc.imread('datasets/basic_data/test_samples/sample0.jpg'), (28, 28))
+    data = np.asarray(data)
+    print(np.invert(data))
+    plt.imshow(np.invert(data), cmap='binary')
+    plt.show()
+
+

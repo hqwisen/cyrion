@@ -16,7 +16,7 @@ export default {
       canvas: null,
       drawing: false,
       startDrawing: false,
-      lineWidth: 3,
+      lineWidth: 7,
       width: 280,
       height: 280
     }
@@ -33,7 +33,7 @@ export default {
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     },
     mouseDown: function (e) {
-      this.setCurrentCoord(e)
+      this.setCurrentCoord(e);
       this.drawing = true;
       this.startDrawing = true;
       if (this.startDrawing) {
