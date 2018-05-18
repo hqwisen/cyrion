@@ -1,7 +1,9 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 import logging
-
+from django.conf import settings
 
 from keras import Sequential
 from keras.models import load_model
@@ -9,8 +11,9 @@ from keras.datasets import mnist
 from keras.layers import Dense
 from keras.utils import np_utils
 
-from PIL import Image
+from scipy import misc
 
+from PIL import Image
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -72,7 +75,14 @@ class Datasets:
 class NeuralNetworkException(Exception):
     pass
 
+
 class NeuralNetwork:
+
+    @staticmethod
+    def get_instance():
+        if NeuralNetwork._instance is None:
+            NeuralNetwork._instance = NeuralNetwork(from_file=NeuralNetwork.DEFAULT_FILENAME)
+        return NeuralNetwork._instance
 
     def __init__(self, dataset=None, from_file=None, epochs=10, batch_size=200):
         self.dataset = dataset
@@ -124,8 +134,18 @@ class NeuralNetwork:
     def evaluate(self):
         self.scores = self.model(self.dataset.x_test, self.dataset.y_test, verbose=2)
 
+    def predict(self, imagefile):
+        data = misc.imresize(misc.imread(imagefile), (28, 28))
+        data = np.asarray(data)
+        # Invert black and white
+        data = np.invert(data).reshape(784)
+        # print(data)
+        prediction = self.model.predict_classes(np.asarray([data]))
+        return prediction[0]
 
-NeuralNetwork.DEFAULT_FILENAME = "basic_ocr.h5"
+
+NeuralNetwork.DEFAULT_FILENAME = os.path.join(settings.BASE_DIR, 'net', "basic_ocr.h5")
+NeuralNetwork._instance = None
 
 
 def load_img(path):
@@ -134,6 +154,7 @@ def load_img(path):
     data = misc.imresize(misc.imread(path), (28, 28))
     data = np.asarray(data)
     print(data)
+
     # data.reshape(1, 1, 28, 28)
     # print(data)
     # x_data = self.x_train
@@ -197,19 +218,20 @@ def main():
     # # plt.savefig('testimg', dpi=1)
     plt.show()
 
-# pred_classes = nn.model.predict_classes(np.asarray([sample, sample]))
-    # print(pred_classes)
 
+# pred_classes = nn.model.predict_classes(np.asarray([sample, sample]))
+# print(pred_classes)
 
 
 if __name__ == "__main__":
     logger.debug("Starting main..")
     # main()
+    nn = NeuralNetwork(from_file=NeuralNetwork.DEFAULT_FILENAME)
+    nn.predict('datasets/basic_data/test_samples/sample0.jpg')
     from scipy import misc
+
     data = misc.imresize(misc.imread('datasets/basic_data/test_samples/sample0.jpg'), (28, 28))
     data = np.asarray(data)
-    print(np.invert(data))
+    # print(np.invert(data))
     plt.imshow(np.invert(data), cmap='binary')
     plt.show()
-
-

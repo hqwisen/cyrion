@@ -10,3 +10,4 @@ sklearn
 numpy
 tensorflow
 jupyter
+opencv-python

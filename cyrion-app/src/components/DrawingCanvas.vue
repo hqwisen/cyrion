@@ -1,6 +1,9 @@
 <template>
+  <div class="col-3">
   <canvas @mousedown="mouseDown" @mouseup="mouseUp" @mouseout="mouseOut" @mousemove="mouseMove"
           ref="canvas" :width="width" :height="height"></canvas>
+    <span v-if="prediction">Prediction: <b>{{ prediction }}</b></span>
+  </div>
 </template>
 
 <script>
@@ -16,9 +19,10 @@ export default {
       canvas: null,
       drawing: false,
       startDrawing: false,
-      lineWidth: 7,
+      lineWidth: 11,
       width: 280,
-      height: 280
+      height: 280,
+      prediction: ""
     }
   },
   mounted: function () {
@@ -76,7 +80,7 @@ export default {
       this.currY = e.clientY - rect.top;
     },
     clear: function () {
-      this.ctx.clearRect(0, 0, this.width, this.height);
+      this.ctx.fillRect(0, 0, this.width, this.height);
     },
     toDataURL: function(){
       return this.canvas.toDataURL('image/png')

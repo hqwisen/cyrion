@@ -10,6 +10,8 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from net.net import NeuralNetwork
+
 logger = logging.getLogger(__name__)
 
 UPLOAD_PARENT_DIR = os.path.join(settings.BASE_DIR, 'net', 'datasets', 'basic_data')
@@ -26,7 +28,9 @@ def basic_upload(request):
         os.makedirs(upload_dir)
     logger.debug("Samples destination: %s" % upload_dir)
     samples = [base64_to_png(samples[i], i, upload_dir) for i in range(len(samples))]
-    return Response({'message': 'Helloww bro!'}, status=200)
+    logger.debug("Samples stored in %s" % samples)
+    predictions = [NeuralNetwork.get_instance().predict(sample) for sample in samples]
+    return Response({'predictions': predictions}, status=200)
 
 
 def remove_html_tags(img_data):
@@ -42,3 +46,4 @@ def base64_to_png(img_html, sid, upload_dir):
     img = Image.open(BytesIO(base64.b64decode(data)))
     img = img.convert('L')
     img.save(filename, format="JPEG")
+    return filename
