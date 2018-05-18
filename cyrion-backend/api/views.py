@@ -30,6 +30,7 @@ def basic_upload(request):
     samples = [base64_to_png(samples[i], i, upload_dir) for i in range(len(samples))]
     logger.debug("Samples stored in %s" % samples)
     predictions = [NeuralNetwork.get_instance().predict(sample) for sample in samples]
+    logger.debug("Predictions are: %s" % predictions)
     return Response({'predictions': predictions}, status=200)
 
 

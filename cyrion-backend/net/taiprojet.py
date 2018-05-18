@@ -1,9 +1,12 @@
 ######################################################
 #   IMPORTATION FOR IMAGE DISPLAY        #############
 ######################################################
+import glob
 import pickle
 import numpy as np
 import matplotlib
+
+import logging
 
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
@@ -52,6 +55,9 @@ from keras.preprocessing.image import ImageDataGenerator
 # from keras.layers.core import Dense, Dropout, Activation
 ######################################################
 ######################################################
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class DataManager:
@@ -403,6 +409,7 @@ class backendAppli:
         self.displayPrediction()
 
     def imagesLoading(self, imagesFilesList):
+        logger.debug("Loading images: %s" % imagesFilesList)
         for elem in imagesFilesList:
             self.imagesList.append(cv2.imread(elem, 1))
 
@@ -430,7 +437,9 @@ class backendAppli:
         # Use gray scale color map if there is only one channel
         cmap = 'gray' if len(self.imagesList[0].shape) == 2 else cmap
         for i in range(len(self.imagesList)):
-            plt.subplot(3, 3, i + 1)
+            # Show 4 images a row
+            nrows, ncols = (len(self.imagesList) // 4) + 1, 4
+            plt.subplot(4, 3, i + 1)
             plt.tight_layout()
             plt.imshow(self.imagesList[i].reshape(32, 32), cmap=cmap, interpolation='none')
             plt.xlabel("{}".format(self.DataManager.signs[np.nonzero(self.predictions[i])[1][0]]))
@@ -448,5 +457,6 @@ if __name__ == '__main__':
     # samples = ["panneaux/im1.jpg", "panneaux/im2.jpg", "panneaux/im3.jpg", "panneaux/im4.jpg",
     #            "panneaux/im5.jpg", "panneaux/im6.jpg",
     #            "panneaux/im7.jpg", "panneaux/im8.jpg", "panneaux/im9.jpg"]
-    samples = ['datasets/70sample.jpg', 'datasets/70sample2.png']
+    # samples = ['datasets/70sample.jpg', 'datasets/70sample2.png']
+    samples = glob.glob("datasets/signs_samples/*.jpg")
     test = backendAppli(samples, "resultsTAI/trafficTAI_deep.h5", dataSet)

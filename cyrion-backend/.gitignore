@@ -1,6 +1,6 @@
 # Ignore neural net. datasets
 net/datasets
-net/resultsTAI
+# net/resultsTAI
 
 ### Django ###
 *.log
