@@ -1,5 +1,6 @@
 # Ignore neural net. datasets
 net/datasets
+net/traffic-signs-data
 # net/resultsTAI
 
 ### Django ###

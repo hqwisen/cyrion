@@ -3,6 +3,8 @@
 ######################################################
 import glob
 import pickle
+from sys import argv
+
 import numpy as np
 import matplotlib
 
@@ -51,7 +53,6 @@ from keras.utils import np_utils
 from keras import backend as K
 from keras.preprocessing.image import ImageDataGenerator
 
-
 # from keras.layers.core import Dense, Dropout, Activation
 ######################################################
 ######################################################
@@ -66,29 +67,29 @@ class DataManager:
     extraction, etc.) management
     """
 
-    def __init__(self, dataFiles):
+    def __init__(self, dataFiles, preprocess=True):
         """
         dataFiles == list of training data, validation data and test data files
         """
         self.dataFiles = dataFiles
         self.signs = []
         ########################
-        self.imagesExtraction()
         self.labelsExtraction()
-        ########################
-        self.Xtraining, self.Ytraining, self.Xvalidation, self.Yvalidation, self.Xtest, self.Ytest = self.imagesExtraction()
-        # define 3 data generators for data augmentation
-        # self.featureStandardization = ImageDataGenerator(featurewise_center=True, featurewise_std_normalization=True)
-        # self.zcaWhitening = ImageDataGenerator(zca_whitening=True)
-        self.randomShifts = ImageDataGenerator(width_shift_range=0.2,
-                                               height_shift_range=0.2)  # shift = 0.2
-        # self.nbSampleToAugment = 20000
-        # self.someAugmentedImages = []
-        # self.someAugmentedLabels = []
-        # ########################
-        self.dataShuffling()  # data preprocessing step 1
+        if preprocess:
+            self.Xtraining, self.Ytraining, self.Xvalidation, self.Yvalidation, self.Xtest, self.Ytest = self.imagesExtraction()
+            ########################
+            # define 3 data generators for data augmentation
+            # self.featureStandardization = ImageDataGenerator(featurewise_center=True, featurewise_std_normalization=True)
+            # self.zcaWhitening = ImageDataGenerator(zca_whitening=True)
+            self.randomShifts = ImageDataGenerator(width_shift_range=0.2,
+                                                   height_shift_range=0.2)  # shift = 0.2
+            # self.nbSampleToAugment = 20000
+            # self.someAugmentedImages = []
+            # self.someAugmentedLabels = []
+            # ########################
+            self.dataShuffling()  # data preprocessing step 1
+            self.preprocessing()  # data preprocessing step 2,3,4
 
-        self.preprocessing() # data preprocessing step 2,3,4
     # self.dataAugmentation()
 
     # self.showImages(self.someAugmentedImages, self.someAugmentedLabels, "gray")
@@ -116,8 +117,8 @@ class DataManager:
         with open(self.dataFiles[2], mode='rb') as f:
             testing = pickle.load(f)
         return (
-        training['features'], training['labels'], validation['features'], validation['labels'],
-        testing['features'], testing['labels'])
+            training['features'], training['labels'], validation['features'], validation['labels'],
+            testing['features'], testing['labels'])
 
     def dataShuffling(self):
         """
@@ -363,7 +364,7 @@ class DeepCNN:
         np.random.seed(self.seed)
         self.myModel.fit(self.myDataManager.Xtraining, self.myDataManager.Ytraining,
                          validation_data=(
-                         self.myDataManager.Xvalidation, self.myDataManager.Yvalidation),
+                             self.myDataManager.Xvalidation, self.myDataManager.Yvalidation),
                          epochs=self.epochs, batch_size=64)
 
     def modelEvaluation(self):
@@ -450,7 +451,7 @@ class backendAppli:
 
 if __name__ == '__main__':
     dataSet = DataManager(["./traffic-signs-data/train.p", "./traffic-signs-data/valid.p",
-                           "./traffic-signs-data/test.p"])
+                           "./traffic-signs-data/test.p"], preprocess=False)
     # dataSet.displayExample()
     # cnn = DeepCNN(dataSet)
     # graphique et matrice
@@ -458,5 +459,8 @@ if __name__ == '__main__':
     #            "panneaux/im5.jpg", "panneaux/im6.jpg",
     #            "panneaux/im7.jpg", "panneaux/im8.jpg", "panneaux/im9.jpg"]
     # samples = ['datasets/70sample.jpg', 'datasets/70sample2.png']
-    samples = glob.glob("datasets/signs_samples/*.jpg")
-    test = backendAppli(samples, "resultsTAI/trafficTAI_deep.h5", dataSet)
+    samples = glob.glob("samples/signs_samples/*.jpg")
+    modelfile = "resultsTAI/trafficTAI_deep.h5"
+    if len(argv) > 1:
+        modelfile = argv[1]
+    test = backendAppli(samples, modelfile, dataSet)
